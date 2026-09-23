@@ -3,3 +3,4 @@
 [6조 타이타닉.csv](https://github.com/user-attachments/files/32279554/6.csv)
 
 
+https://colab.research.google.com/drive/1ICyOIB77oJj_49k_i9_lr0rtvQXvtDMc?usp=drive_link
