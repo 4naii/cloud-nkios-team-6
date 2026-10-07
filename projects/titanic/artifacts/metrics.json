@@ -1,0 +1,278 @@
+{
+  "rows": 100000,
+  "features": [
+    "age",
+    "gender",
+    "marital_status",
+    "occupation",
+    "class",
+    "ticket_price",
+    "cabin_deck",
+    "embarkation_port",
+    "travel_purpose",
+    "journey_duration_days",
+    "siblings_spouses",
+    "parents_children",
+    "family_size",
+    "is_alone",
+    "boarding_position",
+    "lifeboat_access",
+    "medical_condition",
+    "mobility_score",
+    "emergency_response_time",
+    "evacuation_priority",
+    "age_group",
+    "fare_per_person",
+    "family_risk_score"
+  ],
+  "excluded": [
+    "full_name",
+    "Unnamed: 3",
+    "Unnamed: 7",
+    "family_survival_rate",
+    "Unnamed: 24",
+    "survival_probability",
+    "survived"
+  ],
+  "split": {
+    "train": 60000,
+    "validation": 20000,
+    "test": 20000,
+    "test_seed": 42,
+    "validation_seed": 43,
+    "final_fit_rows": 80000
+  },
+  "selection": "Validation accuracy; threshold fixed at 0.5. Final winner refit on train+validation; test not used to select.",
+  "validation_candidates": [
+    {
+      "model": "random_forest_depth5",
+      "accuracy": 0.73195,
+      "accuracy_ci95": [
+        0.7257669957986563,
+        0.7380439154015204
+      ],
+      "balanced_accuracy": 0.5647427769155468,
+      "precision": 0.618125,
+      "recall": 0.1723296741592612,
+      "f1": 0.2695190080392424,
+      "roc_auc": 0.7044508972992347,
+      "confusion_matrix": [
+        [
+          13650,
+          611
+        ],
+        [
+          4750,
+          989
+        ]
+      ]
+    },
+    {
+      "model": "logistic_regression",
+      "accuracy": 0.7342,
+      "accuracy_ci95": [
+        0.7280329890865169,
+        0.740277057919654
+      ],
+      "balanced_accuracy": 0.5918311496452899,
+      "precision": 0.5834319526627219,
+      "recall": 0.25771040250914795,
+      "f1": 0.3575054387237128,
+      "roc_auc": 0.7173546478656028,
+      "confusion_matrix": [
+        [
+          13205,
+          1056
+        ],
+        [
+          4260,
+          1479
+        ]
+      ]
+    },
+    {
+      "model": "hist_gradient_7leaves",
+      "accuracy": 0.7327,
+      "accuracy_ci95": [
+        0.7265223043965459,
+        0.7387883187389623
+      ],
+      "balanced_accuracy": 0.5833864497062755,
+      "precision": 0.5861464270056993,
+      "recall": 0.23296741592611953,
+      "f1": 0.3334164588528678,
+      "roc_auc": 0.7157739004525921,
+      "confusion_matrix": [
+        [
+          13317,
+          944
+        ],
+        [
+          4402,
+          1337
+        ]
+      ]
+    },
+    {
+      "model": "hist_gradient_15leaves",
+      "accuracy": 0.7343,
+      "accuracy_ci95": [
+        0.7281337046078842,
+        0.7403763039896643
+      ],
+      "balanced_accuracy": 0.5868512048408654,
+      "precision": 0.5908507909362976,
+      "recall": 0.24080850322355812,
+      "f1": 0.34216390195592966,
+      "roc_auc": 0.7148312826179707,
+      "confusion_matrix": [
+        [
+          13304,
+          957
+        ],
+        [
+          4357,
+          1382
+        ]
+      ]
+    },
+    {
+      "model": "hist_gradient_31leaves",
+      "accuracy": 0.73415,
+      "accuracy_ci95": [
+        0.7279826314765023,
+        0.7402274347339799
+      ],
+      "balanced_accuracy": 0.585444459444548,
+      "precision": 0.5920593368237347,
+      "recall": 0.23645234361387002,
+      "f1": 0.33794048063752957,
+      "roc_auc": 0.7137400831160509,
+      "confusion_matrix": [
+        [
+          13326,
+          935
+        ],
+        [
+          4382,
+          1357
+        ]
+      ]
+    }
+  ],
+  "selected_model": "hist_gradient_15leaves",
+  "test": {
+    "accuracy": 0.7437,
+    "accuracy_ci95": [
+      0.737602778653172,
+      0.7497036195338642
+    ],
+    "balanced_accuracy": 0.5900909227801372,
+    "precision": 0.5970937912813739,
+    "recall": 0.24357822884857194,
+    "f1": 0.3460066343454963,
+    "roc_auc": 0.7210700643848894,
+    "confusion_matrix": [
+      [
+        13518,
+        915
+      ],
+      [
+        4211,
+        1356
+      ]
+    ]
+  },
+  "corrected_baseline_test": {
+    "accuracy": 0.7396,
+    "accuracy_ci95": [
+      0.7334722060061828,
+      0.7456357669343748
+    ],
+    "balanced_accuracy": 0.5804640362283752,
+    "precision": 0.5851922164214522,
+    "recall": 0.22148374348841388,
+    "f1": 0.32134480062548865,
+    "roc_auc": 0.7117910498677442,
+    "confusion_matrix": [
+      [
+        13559,
+        874
+      ],
+      [
+        4334,
+        1233
+      ]
+    ]
+  },
+  "original_notebook_saved_accuracy": 0.7353,
+  "original_notebook_saved_improved_accuracy": 0.743,
+  "target_accuracy": 0.85,
+  "target_met": false,
+  "probability_diagnostic": {
+    "probability_threshold_accuracy_all_rows": 0.76809,
+    "expected_accuracy_if_labels_are_bernoulli": 0.7693909589999999,
+    "interpretation": "Conditional diagnostic, NOT a proven ceiling. Only applies if supplied probability is the true P(y=1|X). Not used for training or model selection."
+  },
+  "csv_sha256": "32b75ee296569ff119c4f6e5bdd9c1eb57a83633c51e80a47c179cde5cf07e41",
+  "versions": {
+    "python": "3.12.14",
+    "sklearn": "1.8.0",
+    "pandas": "2.2.3",
+    "numpy": "2.3.5",
+    "joblib": "1.5.3"
+  },
+  "scope": "Educational evacuation scenario: lifeboat_access, emergency_response_time, evacuation_priority must be available at prediction time. Not a pre-boarding survival forecast; provenance of family_risk_score must be confirmed.",
+  "missingness": {
+    "development": {
+      "age": 0,
+      "gender": 0,
+      "marital_status": 0,
+      "occupation": 0,
+      "class": 0,
+      "ticket_price": 0,
+      "cabin_deck": 0,
+      "embarkation_port": 0,
+      "travel_purpose": 0,
+      "journey_duration_days": 0,
+      "siblings_spouses": 0,
+      "parents_children": 0,
+      "family_size": 0,
+      "is_alone": 0,
+      "boarding_position": 0,
+      "lifeboat_access": 0,
+      "medical_condition": 0,
+      "mobility_score": 0,
+      "emergency_response_time": 0,
+      "evacuation_priority": 0,
+      "age_group": 0,
+      "fare_per_person": 0,
+      "family_risk_score": 0
+    },
+    "test": {
+      "age": 0,
+      "gender": 0,
+      "marital_status": 0,
+      "occupation": 0,
+      "class": 0,
+      "ticket_price": 0,
+      "cabin_deck": 18000,
+      "embarkation_port": 0,
+      "travel_purpose": 0,
+      "journey_duration_days": 0,
+      "siblings_spouses": 0,
+      "parents_children": 0,
+      "family_size": 0,
+      "is_alone": 0,
+      "boarding_position": 0,
+      "lifeboat_access": 0,
+      "medical_condition": 0,
+      "mobility_score": 0,
+      "emergency_response_time": 5000,
+      "evacuation_priority": 0,
+      "age_group": 0,
+      "fare_per_person": 0,
+      "family_risk_score": 0
+    }
+  }
+}
