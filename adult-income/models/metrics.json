@@ -1,0 +1,15 @@
+{
+  "baseline_all_le50k": 0.7638,
+  "default_0.5": {
+    "threshold": 0.5,
+    "accuracy": 0.8733,
+    "f1": 0.708,
+    "recall_over_50k": 0.65
+  },
+  "tuned": {
+    "threshold": 0.37,
+    "accuracy": 0.8622,
+    "f1": 0.7233,
+    "recall_over_50k": 0.7624
+  }
+}
