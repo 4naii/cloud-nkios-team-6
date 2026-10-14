@@ -1,0 +1,11 @@
+pandas>=2.0
+numpy
+scikit-learn>=1.2
+joblib
+fastapi>=0.100
+uvicorn[standard]
+pydantic>=2
+requests
+# test
+pytest
+httpx

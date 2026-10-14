@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>소득 예측기</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #5d6677;
+    --border: #d9dde5; --accent: #2f6fde; --high: #1f9d63; --low: #8a93a6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171d; --card: #1d2129; --text: #e7eaf0; --muted: #9aa3b5;
+      --border: #333a47; --accent: #6b9dff; --high: #3cc68a; --low: #7c869a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.5 -apple-system, "Segoe UI", "Malgun Gothic", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 24px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 16px; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+  input, select { font: inherit; color: var(--text); background: var(--bg);
+                  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  button { font: inherit; border-radius: 8px; padding: 9px 16px; cursor: pointer;
+           border: 1px solid var(--border); background: var(--card); color: var(--text); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  #result { margin-top: 16px; display: none; }
+  .verdict { font-size: 22px; font-weight: 700; margin: 0 0 10px; }
+  .bar { position: relative; height: 12px; border-radius: 6px; background: var(--border); overflow: hidden; }
+  .fill { height: 100%; background: var(--low); width: 0; transition: width .4s; }
+  .thr { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--text); }
+  .meta { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .error { color: #d64545; }
+</style>
+</head>
+<body>
+<main>
+  <h1>연소득 예측기</h1>
+  <p class="sub">인적 정보를 입력하면 연소득이 5만 달러를 넘을 확률을 예측합니다. (UCI Adult 데이터, 1994년 미국)</p>
+
+  <form id="form" class="card">
+    <div class="grid">
+      <label>나이 <input name="age" type="number" min="17" max="90" value="39" required></label>
+      <label>성별
+        <select name="sex"><option value="Male">남성</option><option value="Female">여성</option></select>
+      </label>
+      <label>학력
+        <select name="education_num">
+          <option value="9">고졸 (HS-grad)</option>
+          <option value="10">대학 중퇴 (Some-college)</option>
+          <option value="11">전문대-직업 (Assoc-voc)</option>
+          <option value="12">전문대-학업 (Assoc-acdm)</option>
+          <option value="13" selected>학사 (Bachelors)</option>
+          <option value="14">석사 (Masters)</option>
+          <option value="15">전문대학원 (Prof-school)</option>
+          <option value="16">박사 (Doctorate)</option>
+          <option value="8">12학년 (12th)</option>
+          <option value="7">11학년 (11th)</option>
+          <option value="6">10학년 (10th)</option>
+          <option value="5">9학년 (9th)</option>
+          <option value="4">7~8학년</option>
+          <option value="3">5~6학년</option>
+          <option value="2">1~4학년</option>
+          <option value="1">미취학 (Preschool)</option>
+        </select>
+      </label>
+      <label>고용 형태
+        <select name="workclass">
+          <option>Private</option><option>Self-emp-not-inc</option><option>Self-emp-inc</option>
+          <option>Federal-gov</option><option>Local-gov</option><option>State-gov</option>
+          <option>Without-pay</option><option>Never-worked</option><option>Unknown</option>
+        </select>
+      </label>
+      <label>직업
+        <select name="occupation">
+          <option>Adm-clerical</option><option>Craft-repair</option><option>Exec-managerial</option>
+          <option>Farming-fishing</option><option>Handlers-cleaners</option><option>Machine-op-inspct</option>
+          <option>Other-service</option><option>Priv-house-serv</option><option selected>Prof-specialty</option>
+          <option>Protective-serv</option><option>Sales</option><option>Tech-support</option>
+          <option>Transport-moving</option><option>Armed-Forces</option><option>Unknown</option>
+        </select>
+      </label>
+      <label>혼인 상태
+        <select name="marital_status">
+          <option>Married-civ-spouse</option><option>Never-married</option><option>Divorced</option>
+          <option>Separated</option><option>Widowed</option><option>Married-spouse-absent</option>
+          <option>Married-AF-spouse</option>
+        </select>
+      </label>
+      <label>가구 내 역할
+        <select name="relationship">
+          <option>Husband</option><option>Wife</option><option>Own-child</option>
+          <option>Not-in-family</option><option>Other-relative</option><option>Unmarried</option>
+        </select>
+      </label>
+      <label>인종
+        <select name="race">
+          <option>White</option><option>Black</option><option>Asian-Pac-Islander</option>
+          <option>Amer-Indian-Eskimo</option><option>Other</option>
+        </select>
+      </label>
+      <label>출신 국가
+        <select name="native_country"><option>United-States</option><option value="Other">미국 외</option></select>
+      </label>
+      <label>주당 근무시간 <input name="hours_per_week" type="number" min="1" max="99" value="40" required></label>
+      <label>자본 이득 ($) <input name="capital_gain" type="number" min="0" max="99999" value="0"></label>
+      <label>자본 손실 ($) <input name="capital_loss" type="number" min="0" max="4356" value="0"></label>
+    </div>
+    <div class="actions">
+      <button type="submit" class="primary">예측하기</button>
+      <button type="button" data-preset="high">예시: 고소득</button>
+      <button type="button" data-preset="low">예시: 저소득</button>
+    </div>
+  </form>
+
+  <div id="result" class="card" aria-live="polite">
+    <p class="verdict" id="verdict"></p>
+    <div class="bar"><div class="fill" id="fill"></div><div class="thr" id="thr"></div></div>
+    <p class="meta" id="meta"></p>
+  </div>
+</main>
+
+<script>
+const form = document.getElementById("form");
+const NUM = ["age", "education_num", "hours_per_week", "capital_gain", "capital_loss"];
+const PRESETS = {
+  high: { age: 45, sex: "Male", education_num: 14, workclass: "Private", occupation: "Exec-managerial",
+          marital_status: "Married-civ-spouse", relationship: "Husband", race: "White",
+          native_country: "United-States", hours_per_week: 50, capital_gain: 15024, capital_loss: 0 },
+  low:  { age: 22, sex: "Female", education_num: 9, workclass: "Private", occupation: "Other-service",
+          marital_status: "Never-married", relationship: "Own-child", race: "White",
+          native_country: "United-States", hours_per_week: 25, capital_gain: 0, capital_loss: 0 },
+};
+
+document.querySelectorAll("[data-preset]").forEach(btn => btn.addEventListener("click", () => {
+  for (const [k, v] of Object.entries(PRESETS[btn.dataset.preset])) form.elements[k].value = v;
+  form.requestSubmit();
+}));
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = {};
+  for (const [k, v] of new FormData(form)) body[k] = NUM.includes(k) ? Number(v) : v;
+
+  const box = document.getElementById("result"), verdict = document.getElementById("verdict");
+  const meta = document.getElementById("meta"), fill = document.getElementById("fill");
+  box.style.display = "block";
+  try {
+    const res = await fetch("/predict", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { throw new Error(`서버 응답 ${res.status}: ${text.slice(0, 200)}`); }
+    if (!res.ok) {
+      const d = data.detail;
+      throw new Error(Array.isArray(d) ? d.map(x => `${x.loc.at(-1)}: ${x.msg}`).join(", ")
+                                       : `서버 오류 ${res.status}: ${d || res.statusText}`);
+    }
+
+    const pct = (data.probability * 100).toFixed(1);
+    const high = data.prediction === 1;
+    verdict.className = "verdict";
+    verdict.textContent = high ? "연소득 $50K 초과로 예측" : "연소득 $50K 이하로 예측";
+    fill.style.width = pct + "%";
+    fill.style.background = high ? "var(--high)" : "var(--low)";
+    document.getElementById("thr").style.left = (data.threshold * 100) + "%";
+    meta.textContent = `>50K 확률 ${pct}% · 판정 기준 ${(data.threshold * 100).toFixed(0)}% (막대의 세로선)`;
+  } catch (err) {
+    verdict.className = "verdict error";
+    verdict.textContent = "예측 실패";
+    fill.style.width = "0";
+    meta.textContent = location.protocol === "file:"
+      ? "HTML 파일을 직접 열었습니다. 서버를 실행한 뒤 http://127.0.0.1:8000 으로 접속하세요."
+      : (err.message === "Failed to fetch" ? "서버에 연결할 수 없습니다. uvicorn이 실행 중인지 확인하세요." : err.message);
+  }
+});
+</script>
+</body>
+</html>
