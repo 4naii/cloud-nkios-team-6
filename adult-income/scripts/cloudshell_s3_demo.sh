@@ -16,7 +16,7 @@ STREAM="api-$(date -u +%Y%m%d)"
 echo "== 계정 $ACCOUNT / 리전 $REGION / 버킷 $BUCKET / 로그 그룹 $CW_LOG_GROUP / 스트림 $STREAM"
 
 echo "== 1. 패키지 설치 + 모델 학습"
-python3 -m pip install -q --user -r requirements.txt
+python3 -m pip install -q -r requirements.txt || python3 -m pip install -q --user -r requirements.txt
 [ -f models/model.joblib ] || python3 -m src.train > /dev/null
 
 echo "== 2. S3 버킷 준비"
