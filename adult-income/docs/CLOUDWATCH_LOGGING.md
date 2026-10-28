@@ -80,6 +80,21 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 
 ## 6. Log Stream → S3 내보내기
 
+### AWS CloudShell 에서 5~6단계를 한 번에
+
+AWS 콘솔 상단의 CloudShell 아이콘(`>_`)을 열고:
+
+```bash
+git clone -b feat/0418dlftjd-cloudwatch-logs https://github.com/4naii/cloud-nkios-team-6.git
+cd cloud-nkios-team-6/adult-income
+bash scripts/cloudshell_s3_demo.sh
+```
+
+모델 학습 → 버킷 생성·정책 적용 → API 실행(CloudWatch 로깅) → 예측·피드백 3건 → 로그 스트림 S3 export → S3 파일 확인까지 진행합니다.
+필요 권한: `s3:CreateBucket`, `s3:PutBucketPolicy`, `logs:*` (CreateLogGroup/Stream, PutLogEvents, CreateExportTask, DescribeExportTasks)
+
+### 스크립트만 따로 실행
+
 ```bash
 python scripts/export_logs_to_s3.py --group /mlops/team6-adult-income --stream api-20261028 --bucket <버킷> --hours 24
 ```
