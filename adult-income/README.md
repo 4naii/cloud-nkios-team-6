@@ -26,6 +26,7 @@ uvicorn app.main:app --reload    # 서버 실행
 - 입력 화면: http://127.0.0.1:8000
 - API 문서 (직접 호출 테스트 가능): http://127.0.0.1:8000/docs
 - 테스트: `pytest -q`
+- 예측/피드백 로그: `logs/events.jsonl`, `CW_LOG_GROUP` 설정 시 CloudWatch Logs 로 전송 → [docs/CLOUDWATCH_LOGGING.md](docs/CLOUDWATCH_LOGGING.md)
 
 ### API 예시
 
@@ -41,7 +42,8 @@ curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -
 
 ```
 ├── app/
-│   ├── main.py            # FastAPI: /, /predict, /health
+│   ├── main.py            # FastAPI: /, /predict, /feedback, /health
+│   ├── ml_logger.py       # 재학습/강화학습용 JSON 로그 → CloudWatch Logs
 │   ├── schemas.py         # 입력값 검증 규칙
 │   └── static/index.html  # 입력 화면
 ├── src/
@@ -50,6 +52,7 @@ curl -X POST http://127.0.0.1:8000/predict -H "Content-Type: application/json" -
 │   ├── predict.py         # 예측 함수
 │   └── preprocess.py      # (지난주) 전처리 CSV 생성
 ├── scripts/validate.py    # 검증
+├── scripts/export_logs_to_s3.py  # CloudWatch 로그 스트림 → S3
 ├── tests/                 # pytest
 ├── models/                # 학습 결과 (model.joblib은 git 제외)
 ├── data/raw, data/processed

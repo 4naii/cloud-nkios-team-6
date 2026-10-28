@@ -1,5 +1,5 @@
 """API 입력/출력 형식 정의 (잘못된 값은 FastAPI가 자동으로 422 에러 반환)"""
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -37,3 +37,10 @@ class PredictionOut(BaseModel):
     label: str
     probability: float = Field(..., description=">50K일 확률")
     threshold: float
+    request_id: str = Field(..., description="피드백(/feedback) 보낼 때 사용하는 예측 ID")
+
+
+class FeedbackIn(BaseModel):
+    request_id: str
+    actual_over_50k: Optional[bool] = Field(None, description="사용자가 알려준 실제 소득 (재학습 정답)")
+    reaction: Literal["helpful", "not_helpful", "none"] = "none"

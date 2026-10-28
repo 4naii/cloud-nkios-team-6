@@ -124,6 +124,16 @@
     <p class="verdict" id="verdict"></p>
     <div class="bar"><div class="fill" id="fill"></div><div class="thr" id="thr"></div></div>
     <p class="meta" id="meta"></p>
+    <div id="feedback" style="display:none; border-top:1px solid var(--border); margin-top:14px; padding-top:12px">
+      <p class="meta" style="margin-top:0">결과가 도움이 됐나요? 실제 소득을 알려주시면 모델 재학습에 사용됩니다.</p>
+      <div class="actions" style="margin-top:8px">
+        <button type="button" data-fb='{"reaction":"helpful"}'>👍 도움됨</button>
+        <button type="button" data-fb='{"reaction":"not_helpful"}'>👎 별로</button>
+        <button type="button" data-fb='{"actual_over_50k":true}'>실제로 $50K 초과</button>
+        <button type="button" data-fb='{"actual_over_50k":false}'>실제로 $50K 이하</button>
+      </div>
+      <p class="meta" id="fbmsg"></p>
+    </div>
   </div>
 </main>
 
@@ -138,6 +148,23 @@ const PRESETS = {
           marital_status: "Never-married", relationship: "Own-child", race: "White",
           native_country: "United-States", hours_per_week: 25, capital_gain: 0, capital_loss: 0 },
 };
+
+let lastRequestId = null;
+
+document.querySelectorAll("[data-fb]").forEach(btn => btn.addEventListener("click", async () => {
+  if (!lastRequestId) return;
+  const msg = document.getElementById("fbmsg");
+  try {
+    const res = await fetch("/feedback", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ request_id: lastRequestId, ...JSON.parse(btn.dataset.fb) }),
+    });
+    const data = await res.json();
+    msg.textContent = res.ok ? `피드백이 저장됐습니다 (reward ${data.reward})` : `피드백 실패: ${data.detail}`;
+  } catch {
+    msg.textContent = "피드백 전송 실패: 서버 연결을 확인하세요.";
+  }
+}));
 
 document.querySelectorAll("[data-preset]").forEach(btn => btn.addEventListener("click", () => {
   for (const [k, v] of Object.entries(PRESETS[btn.dataset.preset])) form.elements[k].value = v;
@@ -173,7 +200,11 @@ form.addEventListener("submit", async (e) => {
     fill.style.background = high ? "var(--high)" : "var(--low)";
     document.getElementById("thr").style.left = (data.threshold * 100) + "%";
     meta.textContent = `>50K 확률 ${pct}% · 판정 기준 ${(data.threshold * 100).toFixed(0)}% (막대의 세로선)`;
+    lastRequestId = data.request_id;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("fbmsg").textContent = "";
   } catch (err) {
+    document.getElementById("feedback").style.display = "none";
     verdict.className = "verdict error";
     verdict.textContent = "예측 실패";
     fill.style.width = "0";
