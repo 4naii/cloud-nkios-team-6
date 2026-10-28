@@ -93,6 +93,24 @@ bash scripts/cloudshell_s3_demo.sh
 모델 학습 → 버킷 생성·정책 적용 → API 실행(CloudWatch 로깅) → 예측·피드백 3건 → 로그 스트림 S3 export → S3 파일 확인까지 진행합니다.
 필요 권한: `s3:CreateBucket`, `s3:PutBucketPolicy`, `logs:*` (CreateLogGroup/Stream, PutLogEvents, CreateExportTask, DescribeExportTasks)
 
+### 실행 결과 (2026-10-28, CloudShell, ap-northeast-2)
+
+| 단계 | 결과 |
+|---|---|
+| `/health` | `"cloudwatch": true`, model_version `v20261028-074039` |
+| 예측 3건 + 피드백 6건 | 로그 그룹 `/mlops/team6-adult-income` / 스트림 `api-20261028` 에 기록됨 |
+| Export task `46a9ef75-…` | `PENDING` → `COMPLETED` |
+| S3 | `s3://team6-adult-income-logs-<계정>/income-predictor-logs/2026/10/28/46a9ef75-…/api-20261028/000000.gz` (300B) + `aws-logs-write-test` |
+
+S3 에서 받은 로그 예시 (CloudWatch 수집 시각 + 우리 JSON):
+
+```
+2026-10-28T07:40:48.358Z {"event_type": "feedback", "request_id": "490a03f9-…", "label": 1, "prediction": 0,
+  "probability": 0.0855, "threshold": 0.37, "correct": false, "reaction": "none", "reward": -1.0}
+```
+
+> 참고: 로그를 보낸 지 약 1분 만에 export 해서 일부 이벤트만 포함됐습니다. AWS 문서상 로그가 export 가능해지기까지 최대 12시간이 걸릴 수 있으므로, 운영에서는 하루치를 다음 날 export 합니다 (`--hours 24`).
+
 ### 스크립트만 따로 실행
 
 ```bash
@@ -108,4 +126,4 @@ python scripts/export_logs_to_s3.py --group /mlops/team6-adult-income --stream a
 - 피드백 매칭용 `PREDICTIONS` 는 메모리 dict 라 서버 재시작 시 사라집니다 → 운영 시 DynamoDB/Redis.
 - 사용자가 알려 준 실제 소득은 자기 보고값이라 노이즈가 있을 수 있습니다.
 - `sex`, `race` 를 입력으로 쓰므로, 재학습 시 공정성 점검(그룹별 재현율 비교)이 필요합니다.
-- CloudWatch 실제 전송과 S3 export 는 AWS 자격증명이 있는 환경(EC2 등)에서 확인이 필요합니다.
+- 한 번에 실행 중인 export task 는 계정당 1개뿐이라, 매일 자동으로 내보내려면 EventBridge 스케줄 + Lambda 또는 Kinesis Firehose 구독으로 바꾸는 것이 좋습니다.
