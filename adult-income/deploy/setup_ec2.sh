@@ -49,7 +49,8 @@ cat > /etc/systemd/system/income-predictor-deploy.timer <<'EOF'
 Description=Check for new commits every minute
 
 [Timer]
-OnBootSec=30s
+OnBootSec=60s
+OnActiveSec=10s
 OnUnitActiveSec=60s
 
 [Install]
