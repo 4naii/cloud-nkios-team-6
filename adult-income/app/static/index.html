@@ -43,7 +43,7 @@
 <body>
 <main>
   <h1>연소득 예측기</h1>
-  <p class="sub">인적 정보를 입력하면 연소득이 5만 달러를 넘을 확률을 예측합니다. (UCI Adult 데이터, 1994년 미국)</p>
+  <p class="sub">인적 정보를 입력하면 연소득이 5만 달러를 넘을 확률을 예측합니다. (1994년 미국 인구조사 데이터)</p>
 
   <form id="form" class="card">
     <div class="grid">
@@ -53,65 +53,92 @@
       </label>
       <label>학력
         <select name="education_num">
-          <option value="9">고졸 (HS-grad)</option>
-          <option value="10">대학 중퇴 (Some-college)</option>
-          <option value="11">전문대-직업 (Assoc-voc)</option>
-          <option value="12">전문대-학업 (Assoc-acdm)</option>
-          <option value="13" selected>학사 (Bachelors)</option>
-          <option value="14">석사 (Masters)</option>
-          <option value="15">전문대학원 (Prof-school)</option>
-          <option value="16">박사 (Doctorate)</option>
-          <option value="8">12학년 (12th)</option>
-          <option value="7">11학년 (11th)</option>
-          <option value="6">10학년 (10th)</option>
-          <option value="5">9학년 (9th)</option>
-          <option value="4">7~8학년</option>
-          <option value="3">5~6학년</option>
-          <option value="2">1~4학년</option>
-          <option value="1">미취학 (Preschool)</option>
+          <option value="9">고등학교 졸업</option>
+          <option value="10">대학 중퇴</option>
+          <option value="11">전문대 (직업 과정)</option>
+          <option value="12">전문대 (학업 과정)</option>
+          <option value="13" selected>대학교 졸업 (학사)</option>
+          <option value="14">석사</option>
+          <option value="15">전문대학원 (법학·의학 등)</option>
+          <option value="16">박사</option>
+          <option value="8">고등학교 3학년 중퇴</option>
+          <option value="7">고등학교 2학년 중퇴</option>
+          <option value="6">고등학교 1학년 중퇴</option>
+          <option value="5">중학교 3학년 중퇴</option>
+          <option value="4">중학교 1~2학년</option>
+          <option value="3">초등학교 5~6학년</option>
+          <option value="2">초등학교 1~4학년</option>
+          <option value="1">미취학</option>
         </select>
       </label>
       <label>고용 형태
         <select name="workclass">
-          <option>Private</option><option>Self-emp-not-inc</option><option>Self-emp-inc</option>
-          <option>Federal-gov</option><option>Local-gov</option><option>State-gov</option>
-          <option>Without-pay</option><option>Never-worked</option><option>Unknown</option>
+          <option value="Private">민간 기업</option>
+          <option value="Self-emp-not-inc">자영업 (개인)</option>
+          <option value="Self-emp-inc">자영업 (법인)</option>
+          <option value="Federal-gov">연방 정부</option>
+          <option value="Local-gov">지방 정부</option>
+          <option value="State-gov">주 정부</option>
+          <option value="Without-pay">무급</option>
+          <option value="Never-worked">근무 경험 없음</option>
+          <option value="Unknown">모름</option>
         </select>
       </label>
       <label>직업
         <select name="occupation">
-          <option>Adm-clerical</option><option>Craft-repair</option><option>Exec-managerial</option>
-          <option>Farming-fishing</option><option>Handlers-cleaners</option><option>Machine-op-inspct</option>
-          <option>Other-service</option><option>Priv-house-serv</option><option selected>Prof-specialty</option>
-          <option>Protective-serv</option><option>Sales</option><option>Tech-support</option>
-          <option>Transport-moving</option><option>Armed-Forces</option><option>Unknown</option>
+          <option value="Adm-clerical">사무·행정</option>
+          <option value="Craft-repair">기술·수리</option>
+          <option value="Exec-managerial">경영·관리직</option>
+          <option value="Farming-fishing">농업·어업</option>
+          <option value="Handlers-cleaners">운반·청소</option>
+          <option value="Machine-op-inspct">기계 조작·검사</option>
+          <option value="Other-service">기타 서비스</option>
+          <option value="Priv-house-serv">가사 도우미</option>
+          <option value="Prof-specialty" selected>전문직</option>
+          <option value="Protective-serv">경비·보안</option>
+          <option value="Sales">영업·판매</option>
+          <option value="Tech-support">기술 지원</option>
+          <option value="Transport-moving">운송·이사</option>
+          <option value="Armed-Forces">군인</option>
+          <option value="Unknown">모름</option>
         </select>
       </label>
       <label>혼인 상태
         <select name="marital_status">
-          <option>Married-civ-spouse</option><option>Never-married</option><option>Divorced</option>
-          <option>Separated</option><option>Widowed</option><option>Married-spouse-absent</option>
-          <option>Married-AF-spouse</option>
+          <option value="Married-civ-spouse">기혼 (배우자와 동거)</option>
+          <option value="Never-married">미혼</option>
+          <option value="Divorced">이혼</option>
+          <option value="Separated">별거</option>
+          <option value="Widowed">사별</option>
+          <option value="Married-spouse-absent">기혼 (배우자와 떨어져 삶)</option>
+          <option value="Married-AF-spouse">기혼 (배우자가 군인)</option>
         </select>
       </label>
       <label>가구 내 역할
         <select name="relationship">
-          <option>Husband</option><option>Wife</option><option>Own-child</option>
-          <option>Not-in-family</option><option>Other-relative</option><option>Unmarried</option>
+          <option value="Husband">남편</option>
+          <option value="Wife">아내</option>
+          <option value="Own-child">자녀</option>
+          <option value="Not-in-family">가족 아님 (1인 가구 등)</option>
+          <option value="Other-relative">기타 친척</option>
+          <option value="Unmarried">미혼 가구원</option>
         </select>
       </label>
       <label>인종
         <select name="race">
-          <option>White</option><option>Black</option><option>Asian-Pac-Islander</option>
-          <option>Amer-Indian-Eskimo</option><option>Other</option>
+          <option value="White">백인</option>
+          <option value="Black">흑인</option>
+          <option value="Asian-Pac-Islander">아시아·태평양계</option>
+          <option value="Amer-Indian-Eskimo">아메리카 원주민</option>
+          <option value="Other">기타</option>
         </select>
       </label>
       <label>출신 국가
-        <select name="native_country"><option>United-States</option><option value="Other">미국 외</option></select>
+        <select name="native_country"><option value="United-States">미국</option><option value="Other">미국 외</option></select>
       </label>
       <label>주당 근무시간 <input name="hours_per_week" type="number" min="1" max="99" value="40" required></label>
-      <label>자본 이득 ($) <input name="capital_gain" type="number" min="0" max="99999" value="0"></label>
-      <label>자본 손실 ($) <input name="capital_loss" type="number" min="0" max="4356" value="0"></label>
+      <label>자본 이득 (달러) <input name="capital_gain" type="number" min="0" max="99999" value="0"></label>
+      <label>자본 손실 (달러) <input name="capital_loss" type="number" min="0" max="4356" value="0"></label>
     </div>
     <div class="actions">
       <button type="submit" class="primary">예측하기</button>
@@ -124,11 +151,29 @@
     <p class="verdict" id="verdict"></p>
     <div class="bar"><div class="fill" id="fill"></div><div class="thr" id="thr"></div></div>
     <p class="meta" id="meta"></p>
+    <div id="feedback" style="display:none; border-top:1px solid var(--border); margin-top:14px; padding-top:12px">
+      <p class="meta" style="margin-top:0">결과가 도움이 됐나요? 실제 소득을 알려주시면 모델 재학습에 사용됩니다.</p>
+      <div class="actions" style="margin-top:8px">
+        <button type="button" data-fb='{"reaction":"helpful"}'>👍 도움됨</button>
+        <button type="button" data-fb='{"reaction":"not_helpful"}'>👎 별로</button>
+        <button type="button" data-fb='{"actual_over_50k":true}'>실제로 5만 달러 초과</button>
+        <button type="button" data-fb='{"actual_over_50k":false}'>실제로 5만 달러 이하</button>
+      </div>
+      <p class="meta" id="fbmsg"></p>
+    </div>
   </div>
+  <p class="meta" id="modelinfo" style="margin-top:16px"></p>
 </main>
 
 <script>
 const form = document.getElementById("form");
+
+fetch("/model-info").then(r => r.json()).then(m => {
+  const h = (m.metrics || {}).holdout || {};
+  document.getElementById("modelinfo").textContent =
+    `배포 모델 ${m.model_version} · 커밋 ${(m.info.git_sha || "?").slice(0, 7)} · 재학습 피드백 ${m.info.n_feedback ?? 0}건` +
+    (h.accuracy ? ` · 평가 정확도 ${(h.accuracy * 100).toFixed(1)}% · 종합 점수 ${h.f1} · 고소득자 재현율 ${h.recall_over_50k}` : "");
+}).catch(() => {});
 const NUM = ["age", "education_num", "hours_per_week", "capital_gain", "capital_loss"];
 const PRESETS = {
   high: { age: 45, sex: "Male", education_num: 14, workclass: "Private", occupation: "Exec-managerial",
@@ -138,6 +183,23 @@ const PRESETS = {
           marital_status: "Never-married", relationship: "Own-child", race: "White",
           native_country: "United-States", hours_per_week: 25, capital_gain: 0, capital_loss: 0 },
 };
+
+let lastRequestId = null;
+
+document.querySelectorAll("[data-fb]").forEach(btn => btn.addEventListener("click", async () => {
+  if (!lastRequestId) return;
+  const msg = document.getElementById("fbmsg");
+  try {
+    const res = await fetch("/feedback", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ request_id: lastRequestId, ...JSON.parse(btn.dataset.fb) }),
+    });
+    const data = await res.json();
+    msg.textContent = res.ok ? `피드백이 저장됐습니다 (보상 ${data.reward})` : `피드백 실패: ${data.detail}`;
+  } catch {
+    msg.textContent = "피드백 전송 실패: 서버 연결을 확인하세요.";
+  }
+}));
 
 document.querySelectorAll("[data-preset]").forEach(btn => btn.addEventListener("click", () => {
   for (const [k, v] of Object.entries(PRESETS[btn.dataset.preset])) form.elements[k].value = v;
@@ -168,12 +230,16 @@ form.addEventListener("submit", async (e) => {
     const pct = (data.probability * 100).toFixed(1);
     const high = data.prediction === 1;
     verdict.className = "verdict";
-    verdict.textContent = high ? "연소득 $50K 초과로 예측" : "연소득 $50K 이하로 예측";
+    verdict.textContent = high ? "연소득 5만 달러 초과로 예측" : "연소득 5만 달러 이하로 예측";
     fill.style.width = pct + "%";
     fill.style.background = high ? "var(--high)" : "var(--low)";
     document.getElementById("thr").style.left = (data.threshold * 100) + "%";
-    meta.textContent = `>50K 확률 ${pct}% · 판정 기준 ${(data.threshold * 100).toFixed(0)}% (막대의 세로선)`;
+    meta.textContent = `5만 달러 초과 확률 ${pct}% · 판정 기준 ${(data.threshold * 100).toFixed(0)}% (막대의 세로선)`;
+    lastRequestId = data.request_id;
+    document.getElementById("feedback").style.display = "block";
+    document.getElementById("fbmsg").textContent = "";
   } catch (err) {
+    document.getElementById("feedback").style.display = "none";
     verdict.className = "verdict error";
     verdict.textContent = "예측 실패";
     fill.style.width = "0";

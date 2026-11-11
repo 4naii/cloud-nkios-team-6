@@ -3,3 +3,5 @@ __pycache__/
 .DS_Store
 .venv/
 models/model.joblib
+logs/
+data/feedback/raw_logs.jsonl
