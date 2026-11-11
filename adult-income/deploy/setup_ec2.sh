@@ -9,7 +9,8 @@ GITHUB_REPO="4naii/cloud-nkios-team-6"
 
 dnf install -y git python3.11 python3.11-pip
 id app || useradd -m app
-[ -d /home/app/repo ] || runuser -u app -- git clone "https://github.com/$GITHUB_REPO.git" /home/app/repo
+# 배포 브랜치로 clone (deploy.sh 가 그 브랜치에 있어야 타이머가 실행할 수 있음)
+[ -d /home/app/repo ] || runuser -u app -- git clone -b "$DEPLOY_BRANCH" "https://github.com/$GITHUB_REPO.git" /home/app/repo
 [ -d /home/app/venv ] || runuser -u app -- python3.11 -m venv /home/app/venv
 
 cat > /etc/income-predictor.env <<EOF
