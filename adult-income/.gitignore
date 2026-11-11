@@ -4,3 +4,4 @@ __pycache__/
 .venv/
 models/model.joblib
 logs/
+data/feedback/raw_logs.jsonl
