@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # AWS CloudShell 에서 1회 실행: 배포용 EC2 생성
-#   - IAM 역할: CloudWatch Logs 쓰기/읽기 + SSM 접속(콘솔에서 SSH 없이 접속)
+#   - IAM 역할: 학교 제공 yeonsung-ec2-ssm-cloudwatch-role (CloudWatch Logs + SSM 접속)
+#     다른 역할을 쓰려면 INSTANCE_PROFILE=<이름> bash deploy/create_ec2.sh ...
 #   - 보안 그룹: 8000 포트만 공개 (SSH 포트 안 엶)
 #   - user-data: deploy/setup_ec2.sh (이후 배포는 EC2 가 CI 통과 커밋을 스스로 가져감)
 #
@@ -10,8 +11,8 @@ set -euo pipefail
 BRANCH="${1:-main}"
 REGION="${AWS_REGION:-ap-northeast-2}"
 NAME=team6-income-predictor
-ROLE=team6-income-predictor-ec2
-export AWS_REGION="$REGION" AWS_DEFAULT_REGION="$REGION"
+ROLE="${INSTANCE_PROFILE:-yeonsung-ec2-ssm-cloudwatch-role}"  # CloudWatch Logs + SSM 권한
+export AWS_REGION="$REGION" AWS_DEFAULT_REGION="$REGION" AWS_PAGER=""
 
 EXISTING=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$NAME" \
   "Name=instance-state-name,Values=pending,running" --query 'Reservations[].Instances[].InstanceId' --output text)
@@ -21,17 +22,8 @@ if [ -n "$EXISTING" ]; then
   exit 0
 fi
 
-echo "== 1. IAM 역할"
-if ! aws iam get-role --role-name "$ROLE" > /dev/null 2>&1; then
-  aws iam create-role --role-name "$ROLE" --assume-role-policy-document \
-    '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ec2.amazonaws.com"},"Action":"sts:AssumeRole"}]}' > /dev/null
-  aws iam attach-role-policy --role-name "$ROLE" --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-  aws iam put-role-policy --role-name "$ROLE" --policy-name cloudwatch-logs --policy-document \
-    '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents","logs:DescribeLogStreams","logs:FilterLogEvents","logs:GetLogEvents"],"Resource":"*"}]}'
-  aws iam create-instance-profile --instance-profile-name "$ROLE" > /dev/null
-  aws iam add-role-to-instance-profile --instance-profile-name "$ROLE" --role-name "$ROLE"
-  echo "   생성 완료, IAM 반영 대기 15초"; sleep 15
-fi
+echo "== 1. IAM 역할 (수업 계정은 역할 생성이 막혀 있어 학교 제공 역할 사용)"
+aws iam get-instance-profile --instance-profile-name "$ROLE" --query 'InstanceProfile.Roles[0].RoleName' --output text
 
 echo "== 2. 보안 그룹 (8000 포트)"
 VPC=$(aws ec2 describe-vpcs --filters Name=isDefault,Values=true --query 'Vpcs[0].VpcId' --output text)
