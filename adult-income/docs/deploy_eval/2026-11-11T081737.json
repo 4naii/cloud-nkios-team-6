@@ -1,0 +1,13 @@
+{
+  "measured_at": "2026-11-11T08:17:37+00:00",
+  "url": "http://3.36.68.165:8000",
+  "model_version": "v20261111-081625",
+  "git_sha": "1ff507c08fe48b92d50d05d4d07d108eaa0b7358",
+  "n_feedback_in_training": 503,
+  "n_requests": 1000,
+  "accuracy": 0.881,
+  "f1": 0.7689,
+  "recall_over_50k": 0.8354,
+  "latency_ms_p50": 39.3,
+  "latency_ms_p95": 99.5
+}
