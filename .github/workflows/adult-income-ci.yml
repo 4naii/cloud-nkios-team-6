@@ -1,0 +1,42 @@
+# CI: 모든 push / PR 에서 학습 -> 검증 -> 테스트
+# CD: EC2 의 deploy 타이머가 이 워크플로의 "test" 잡이 성공한 커밋만 가져가 배포한다 (adult-income/deploy/)
+name: adult-income CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: adult-income
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: adult-income/requirements.txt
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Train
+        run: python -m src.train
+
+      - name: Validate model
+        run: python -m scripts.validate
+
+      - name: Test API
+        run: pytest -q
+
+      - name: Summary
+        run: |
+          echo "### 모델 지표 (${GITHUB_SHA::7})" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat models/metrics.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"

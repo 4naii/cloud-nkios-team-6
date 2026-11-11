@@ -135,10 +135,18 @@
       <p class="meta" id="fbmsg"></p>
     </div>
   </div>
+  <p class="meta" id="modelinfo" style="margin-top:16px"></p>
 </main>
 
 <script>
 const form = document.getElementById("form");
+
+fetch("/model-info").then(r => r.json()).then(m => {
+  const h = (m.metrics || {}).holdout || {};
+  document.getElementById("modelinfo").textContent =
+    `배포 모델 ${m.model_version} · 커밋 ${(m.info.git_sha || "?").slice(0, 7)} · 재학습 피드백 ${m.info.n_feedback ?? 0}건` +
+    (h.accuracy ? ` · holdout 정확도 ${(h.accuracy * 100).toFixed(1)}% · F1 ${h.f1} · >50K 재현율 ${h.recall_over_50k}` : "");
+}).catch(() => {});
 const NUM = ["age", "education_num", "hours_per_week", "capital_gain", "capital_loss"];
 const PRESETS = {
   high: { age: 45, sex: "Male", education_num: 14, workclass: "Private", occupation: "Exec-managerial",

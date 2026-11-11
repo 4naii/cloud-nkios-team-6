@@ -30,6 +30,7 @@ class PersonIn(BaseModel):
     capital_loss: float = Field(0, ge=0, le=4356)
     hours_per_week: int = Field(..., ge=1, le=99, examples=[40])
     native_country: str = Field("United-States", description="미국 외 국가는 모두 'Other'로 처리됨")
+    source: Optional[str] = Field(None, description="요청 출처 (web / simulated / eval). eval 은 재학습에서 제외")
 
 
 class PredictionOut(BaseModel):

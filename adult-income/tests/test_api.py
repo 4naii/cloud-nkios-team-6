@@ -34,3 +34,10 @@ def test_predict_rejects_bad_input():
         assert c.post("/predict", json={**GOOD, "sex": "X"}).status_code == 422      # 없는 범주
         bad = dict(GOOD); bad.pop("age")
         assert c.post("/predict", json=bad).status_code == 422                       # 필수값 누락
+
+
+def test_model_info():
+    with TestClient(app) as c:
+        body = c.get("/model-info").json()
+        assert body["metrics"]["holdout"]["accuracy"] > 0.85
+        assert {"git_sha", "n_feedback", "trained_at"} <= body["info"].keys()

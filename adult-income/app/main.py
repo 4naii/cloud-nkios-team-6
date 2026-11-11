@@ -7,6 +7,7 @@ CloudWatch 전송: CW_LOG_GROUP 환경변수 설정 시 (docs/CLOUDWATCH_LOGGING
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import json
 import logging
 import time
 import traceback
@@ -56,7 +57,17 @@ def index():
 @app.get("/health")
 def health():
     return {"status": "ok", "threshold": load_model()["threshold"],
-            "model_version": MODEL_VERSION, "cloudwatch": ml_log.cloudwatch_enabled}
+            "model_version": MODEL_VERSION, "git_sha": load_model().get("info", {}).get("git_sha"),
+            "cloudwatch": ml_log.cloudwatch_enabled}
+
+
+@app.get("/model-info")
+def model_info():
+    """배포된 모델의 학습 정보와 지표 (재학습 전/후 비교용)"""
+    metrics_path = Path(__file__).resolve().parents[1] / "models" / "metrics.json"
+    return {"model_version": MODEL_VERSION,
+            "info": load_model().get("info", {}),
+            "metrics": json.loads(metrics_path.read_text(encoding="utf-8")) if metrics_path.exists() else None}
 
 
 @app.post("/predict", response_model=PredictionOut)

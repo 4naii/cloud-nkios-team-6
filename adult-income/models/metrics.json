@@ -11,5 +11,11 @@
     "accuracy": 0.8622,
     "f1": 0.7233,
     "recall_over_50k": 0.7624
+  },
+  "holdout": {
+    "threshold": 0.37,
+    "accuracy": 0.8664,
+    "f1": 0.7296,
+    "recall_over_50k": 0.7634
   }
 }
